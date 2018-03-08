@@ -11,4 +11,9 @@ import scrapy
 class SinafinanceItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
-    pass
+    code = scrapy.Field()
+    time = scrapy.Field()
+    date = scrapy.Field()
+    link = scrapy.Field()
+    title = scrapy.Field()
+    content = scrapy.Field()

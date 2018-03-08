@@ -14,12 +14,17 @@ BOT_NAME = 'sinaFinance'
 SPIDER_MODULES = ['sinaFinance.spiders']
 NEWSPIDER_MODULE = 'sinaFinance.spiders'
 
+# set mongodb configuration
+MONGODB_HOST = '127.0.0.1'
+MONGODB_POST = 27017
+MONGODB_DBNAME = "sinafinance"
+MONGODB_SINANEWS = "sinafinance"
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'sinaFinance (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
-ROBOTSTXT_OBEY = True
+ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
@@ -33,7 +38,7 @@ ROBOTSTXT_OBEY = True
 #CONCURRENT_REQUESTS_PER_IP = 16
 
 # Disable cookies (enabled by default)
-#COOKIES_ENABLED = False
+COOKIES_ENABLED = False
 
 # Disable Telnet Console (enabled by default)
 #TELNETCONSOLE_ENABLED = False
@@ -64,9 +69,10 @@ ROBOTSTXT_OBEY = True
 
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    'sinaFinance.pipelines.SinafinancePipeline': 300,
-#}
+ITEM_PIPELINES = {
+   # 'sinaFinance.pipelines.SinafinancePipeline': 300,
+    'sinaFinance.pipelines.MongodbPipeline': 300,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://doc.scrapy.org/en/latest/topics/autothrottle.html
