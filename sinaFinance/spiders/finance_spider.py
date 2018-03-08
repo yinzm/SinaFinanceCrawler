@@ -4,7 +4,19 @@ from ..items import SinafinanceItem
 
 class FinanceSpider(scrapy.Spider):
     name = "sina"
-    start_urls = ['http://vip.stock.finance.sina.com.cn/corp/view/vCB_AllNewsStock.php?symbol=sz000001']
+    # start_urls = ['http://vip.stock.finance.sina.com.cn/corp/view/vCB_AllNewsStock.php?symbol=sz000001']
+    start_urls = []
+
+    def start_requests(self):
+        with open('stock_list.csv', 'r') as f:
+            for stock in f.readlines():
+                stock = stock.strip()
+                if stock[-2:] == 'SZ':
+                    stock = 'sz' + stock
+                else:
+                    stock = 'sh' + stock
+                url = 'http://vip.stock.finance.sina.com.cn/corp/view/vCB_AllNewsStock.php?symbol=' + stock
+                FinanceSpider.start_urls.append(url)
 
     def parse(self, response):
         start = response.url.find('symbol=')+len('symbol=')+2
