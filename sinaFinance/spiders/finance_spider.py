@@ -56,6 +56,10 @@ class FinanceSpider(RedisSpider):
         # 已经处理完一个页面的所有新闻，进行下一页处理
         next_page = selector.xpath('//div[@style="margin-top:10px;float:right;margin-right:100px;"]/a/@href').extract()
         if next_page:
+            # 当前页面爬取有问题，重爬
+            if len(url_list) < 40:
+                yield scrapy.Request(response.url, callback=self.parse)
+
             next = next_page[-1]
             yield scrapy.Request(next, callback=self.parse)
 
@@ -66,12 +70,21 @@ class FinanceSpider(RedisSpider):
         for part in content_list:
             part = part.strip().encode('utf-8')
             content += part
-        item = SinafinanceItem()
-        item['code'] = response.meta['code']
-        item['time'] = response.meta['time']
-        item['date'] = response.meta['date']
-        item['link'] = response.meta['link']
-        item['title'] = response.meta['title']
-        item['content'] = content
-        yield item
+        # 如果新闻页面为空，重新爬取该新闻
+        if content == '':
+            yield scrapy.Request(response.url, callback=self.parse_content,
+                                 meta={'time': response.meta['time'],
+                                        'date': response.meta['date'],
+                                        'code': response.meta['code'],
+                                        'link': response.meta['link'],
+                                       'title': response.meta['title']})
+        else:
+            item = SinafinanceItem()
+            item['code'] = response.meta['code']
+            item['time'] = response.meta['time']
+            item['date'] = response.meta['date']
+            item['link'] = response.meta['link']
+            item['title'] = response.meta['title']
+            item['content'] = content
+            yield item
 
