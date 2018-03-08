@@ -1,21 +1,23 @@
 # -*- coding: utf-8 -*-
 import scrapy
-from ..items import SinafinanceItem
+from items import SinafinanceItem
+from scrapy_redis.spiders import RedisSpider
 
-class FinanceSpider(scrapy.Spider):
+class FinanceSpider(RedisSpider):
+# class FinanceSpider(scrapy.Spider):
     name = "sina"
     # start_urls = ['http://vip.stock.finance.sina.com.cn/corp/view/vCB_AllNewsStock.php?symbol=sz000001']
     start_urls = []
 
-    def start_requests(self):
+    def __init__(self):
         with open('stock_list.csv', 'r') as f:
             for stock in f.readlines():
                 stock = stock.strip()
                 if stock[-2:] == 'SZ':
-                    stock = 'sz' + stock
+                    stock_code = 'sz' + stock[:-3]
                 else:
-                    stock = 'sh' + stock
-                url = 'http://vip.stock.finance.sina.com.cn/corp/view/vCB_AllNewsStock.php?symbol=' + stock
+                    stock_code = 'sh' + stock[:-3]
+                url = 'http://vip.stock.finance.sina.com.cn/corp/view/vCB_AllNewsStock.php?symbol=' + stock_code
                 FinanceSpider.start_urls.append(url)
 
     def parse(self, response):
