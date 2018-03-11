@@ -52,7 +52,7 @@ class FinanceSpider(RedisSpider):
             # print("time:", time[:10], time[-5:], date_str, time_str)
             # print("title:", title)
             # print("url:", url)
-            yield scrapy.Request(url, callback=self.parse_content, meta={'time':date_str+time_str, 'date':date_str, 'code':code, 'link':url, 'title':title})
+            yield scrapy.Request(url, dont_filter=True, callback=self.parse_content, meta={'time':date_str+time_str, 'date':date_str, 'code':code, 'link':url, 'title':title})
         # 已经处理完一个页面的所有新闻，进行下一页处理
         next_page = selector.xpath('//div[@style="margin-top:10px;float:right;margin-right:100px;"]/a/@href').extract()
         if next_page:
@@ -72,7 +72,7 @@ class FinanceSpider(RedisSpider):
             content += part
         # 如果新闻页面为空，重新爬取该新闻
         if content == '':
-            yield scrapy.Request(response.url, callback=self.parse_content,
+            yield scrapy.Request(response.url, dont_filter=True, callback=self.parse_content,
                                  meta={'time': response.meta['time'],
                                         'date': response.meta['date'],
                                         'code': response.meta['code'],
